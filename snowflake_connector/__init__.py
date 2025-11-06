@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def connect(
-    account: Optional[str] = "GAIADLH-HPA09261",
+    account: Optional[str] = None,
     user: Optional[str] = None,
     password: Optional[str] = None,
     warehouse: Optional[str] = None,
@@ -38,8 +38,8 @@ def connect(
     MFA will be handled automatically if required.
     
     Args:
-        account: Snowflake account identifier (default: 'GAIADLH-HPA09261').
-            Can be overridden with a different account if needed.
+        account: Snowflake account identifier (prompted if not provided).
+            Can be: 'xy12345', 'myorg-xy12345', 'xy12345.us-east-1', etc.
         user: Snowflake username (prompted if not provided)
         password: Snowflake password (prompted securely if not provided)
         warehouse: Default warehouse to use (optional)
@@ -48,10 +48,15 @@ def connect(
     """
     global _connection_manager
     
-    # Account is hardcoded to GAIADLH-HPA09261 by default
-    # Use default if explicitly set to None (allows override)
+    # Prompt for account if not provided
     if account is None:
-        account = "GAIADLH-HPA09261"
+        print("\nSnowflake Account Format:")
+        print("  - Account locator only: 'xy12345'")
+        print("  - With organization: 'myorg-xy12345'")
+        print("  - With region: 'xy12345.us-east-1'")
+        print("  - Full identifier: 'myorg-xy12345.us-east-1'")
+        print("  (Find it in your Snowflake URL or profile settings)\n")
+        account = get_input("Enter Snowflake account: ")
     
     if user is None:
         user = get_input("Enter Snowflake username: ")
